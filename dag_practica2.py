@@ -36,10 +36,11 @@ dag = DAG(
 )
 
 CrearEntornoBBDD = BashOperator(
-    task_id = 'crearEntornoBBDD',
+    task_id='crearEntornoBBDD',
     bash_command= 
-    'curl -o /tmp/practica2 https://github.com/mjls130598/Practica2-CC/archive/refs/heads/main.zip ' +
-    '&& unzip /tmp/practica2 && cd /tmp && docker-compose build'
+    'cd /tmp && git clone https://github.com/mjls130598/Practica2-CC.git' +
+    '&& cd /tmp/Practica2-CC && docker-compose build',
+    dag=dag
 )
 
 DescargaDatosA = BashOperator(
@@ -54,7 +55,7 @@ bash_command='curl -o /tmp/temperature.csv.zip https://github.com/manuparra/Mate
 dag=dag,
 )
 
-unZipFicheros = BashOperator(
+UnZipFicheros = BashOperator(
 task_id='capturaDatos',
 bash_command='unzip /tmp/humidity.csv.zip && unzip /tmp/temperature.csv.zip',
 dag=dag,
@@ -62,4 +63,4 @@ dag=dag,
 
 
 #Dependencias
-CrearEntornoBBDD >> [DescargaDatosA, DescargaDatosB] >> unZipFicheros
+CrearEntornoBBDD >> [DescargaDatosA, DescargaDatosB] >> UnZipFicheros
