@@ -42,6 +42,18 @@ CrearEntornoBBDD = BashOperator(
     '&& unzip /tmp/practica2 && cd /tmp && docker-compose build'
 )
 
+DescargaDatosA = BashOperator(
+task_id='descargaA',
+bash_command='curl -o /tmp/humidity.csv.zip https://github.com/manuparra/MaterialCC2020/blob/master/humidity.csv.zip',
+dag=dag,
+)
+
+DescargaDatosB = BashOperator(
+task_id='descargaB',
+bash_command='curl -o /tmp/temperature.csv.zip https://github.com/manuparra/MaterialCC2020/blob/master/temperature.csv.zip',
+dag=dag,
+)
+
 
 #Dependencias
-CrearEntornoBBDD
+CrearEntornoBBDD >> [DescargaDatosA, DescargaDatosB]
