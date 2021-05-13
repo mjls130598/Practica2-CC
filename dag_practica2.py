@@ -45,18 +45,18 @@ CrearEntornoBBDD = BashOperator(
 
 DescargaDatosA = BashOperator(
 task_id='descargaA',
-bash_command='curl -o /tmp/humidity.csv.zip https://github.com/manuparra/MaterialCC2020/blob/master/humidity.csv.zip',
+bash_command='cd /tmp && wget https://github.com/manuparra/MaterialCC2020/blob/master/humidity.csv.zip',
 dag=dag,
 )
 
 DescargaDatosB = BashOperator(
 task_id='descargaB',
-bash_command='curl -o /tmp/temperature.csv.zip https://github.com/manuparra/MaterialCC2020/blob/master/temperature.csv.zip',
+bash_command='cd /tmp && wget https://github.com/manuparra/MaterialCC2020/blob/master/temperature.csv.zip',
 dag=dag,
 )
 
 UnZipFicheros = BashOperator(
-task_id='capturaDatos',
+task_id='UnZipFicheros',
 bash_command='unzip /tmp/humidity.csv.zip && unzip /tmp/temperature.csv.zip',
 dag=dag,
 )
