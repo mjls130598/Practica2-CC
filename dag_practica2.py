@@ -54,6 +54,12 @@ bash_command='curl -o /tmp/temperature.csv.zip https://github.com/manuparra/Mate
 dag=dag,
 )
 
+unZipFicheros = BashOperator(
+task_id='capturaDatos',
+bash_command='unzip /tmp/humidity.csv.zip && unzip /tmp/temperature.csv.zip',
+dag=dag,
+)
+
 
 #Dependencias
-CrearEntornoBBDD >> [DescargaDatosA, DescargaDatosB]
+CrearEntornoBBDD >> [DescargaDatosA, DescargaDatosB] >> unZipFicheros
