@@ -16,7 +16,7 @@ services:
     ports: 
       - 27017:27017
     volumes:
-      -  /basedatos:/data/db
+      -  ./basedatos:/data/db
 
   mongo-express:
     image: mongo-express
