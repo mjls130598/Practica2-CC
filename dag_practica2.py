@@ -42,7 +42,8 @@ CrearEntornoBBDD = BashOperator(
     bash_command= 
     'cd /tmp && git clone https://github.com/mjls130598/Practica2-CC.git' +
     ' && cd /tmp/Practica2-CC && docker-compose build && ' + 
-    'docker-compose run web django-admin.py startproject practica2 .',
+    'docker-compose run web django-admin.py startproject practica2 . &&' +
+    'docker-compose run web python manage.py startapp prediccion',
     dag=dag
 )
 
