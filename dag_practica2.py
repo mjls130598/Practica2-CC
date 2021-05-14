@@ -41,7 +41,8 @@ CrearEntornoBBDD = BashOperator(
     task_id='crearEntornoBBDD',
     bash_command= 
     'cd /tmp && git clone https://github.com/mjls130598/Practica2-CC.git' +
-    ' && cd /tmp/Practica2-CC && docker-compose build',
+    ' && cd /tmp/Practica2-CC && docker-compose build && ' + 
+    'docker-compose run web django-admin.py startproject practica2 .',
     dag=dag
 )
 
@@ -90,7 +91,6 @@ FusionarDatos = PythonOperator(
     python_callable=fusionarDatos,
     dag=dag
 )
-
 
 #Dependencias
 CrearEntornoBBDD >> [DescargaDatosA, DescargaDatosB] >> UnZipFicheros >> FusionarDatos
