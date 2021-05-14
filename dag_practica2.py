@@ -1,7 +1,9 @@
 from datetime import timedelta
 from airflow import DAG
 from airflow.operators.bash_operator import BashOperator
+from airflow.operators.python_operator import PythonOperator
 from airflow.utils.dates import days_ago
+import pandas as pd
 
 default_args = {
     'owner': 'airflow',
@@ -44,23 +46,48 @@ CrearEntornoBBDD = BashOperator(
 )
 
 DescargaDatosA = BashOperator(
-task_id='descargaA',
-bash_command='cd /tmp/Practica2-CC && wget https://github.com/manuparra/MaterialCC2020/raw/master/humidity.csv.zip',
-dag=dag,
+    task_id='descargaA',
+    bash_command='cd /tmp/Practica2-CC && wget https://github.com/manuparra/MaterialCC2020/raw/master/humidity.csv.zip',
+    dag=dag,
 )
 
 DescargaDatosB = BashOperator(
-task_id='descargaB',
-bash_command='cd /tmp/Practica2-CC && wget https://github.com/manuparra/MaterialCC2020/raw/master/temperature.csv.zip',
-dag=dag,
+    task_id='descargaB',
+    bash_command='cd /tmp/Practica2-CC && wget https://github.com/manuparra/MaterialCC2020/raw/master/temperature.csv.zip',
+    dag=dag,
 )
 
 UnZipFicheros = BashOperator(
-task_id='UnZipFicheros',
-bash_command='unzip /tmp/Practica2-CC/humidity.csv.zip && unzip /tmp/Practica2-CC/temperature.csv.zip',
-dag=dag,
+    task_id='unZipFicheros',
+    bash_command='unzip /tmp/Practica2-CC/humidity.csv.zip && unzip /tmp/Practica2-CC/temperature.csv.zip',
+    dag=dag,
+)
+
+# Función para fusionar columnas
+def fusionarDatos():
+    # Abrir los ficheros de los datos
+    temperatura = pd.read_csv("/tmp/Practica2-CC/temperature.csv")
+    humedad = pd.read_csv("/tmp/Practica2-CC/humidity.csv")
+
+    # Para cada tabla, obtener las columnas fecha y San Francisco
+    temperatura_select = temperatura[['datetime', 'San Francisco']]
+    humedad_select = humedad[['datetime', 'San Francisco']]
+
+    # Para cada tabla, cambiar la columna San Francisco por el nombre de la tabla
+    temperatura_renombre = temperatura_select.rename(columns={'San Francisco': 'temperature'})
+    humedad_renombre = humedad_select.rename(columns={'San Francisco': 'humidity'})
+
+    # Unir ambas tablas por la columna fecha
+    union = pd.merge(temperatura_renombre, humedad_renombre, on="datetime")
+    union.to_csv("/tmp/Practica2-CC/datos.csv")
+
+FusionarDatos = PythonOperator(
+    task_id='fusionarDatos',
+    provide_context=True,
+    python_callable=fusionarDatos,
+    dag=dag
 )
 
 
 #Dependencias
-CrearEntornoBBDD >> [DescargaDatosA, DescargaDatosB] >> UnZipFicheros
+CrearEntornoBBDD >> [DescargaDatosA, DescargaDatosB] >> UnZipFicheros >> FusionarDatos
