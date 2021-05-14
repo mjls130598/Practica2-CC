@@ -93,5 +93,11 @@ FusionarDatos = PythonOperator(
     dag=dag
 )
 
+AlmacenarBBDD = BashOperator(
+    task_id='almacenarBBDD',
+    bash_command='cd /tmp/Practica2-CC && docker-compose run web python enviarBBDD.py',
+    dag=dag,
+)
+
 #Dependencias
-CrearEntornoBBDD >> [DescargaDatosA, DescargaDatosB] >> UnZipFicheros >> FusionarDatos
+CrearEntornoBBDD >> [DescargaDatosA, DescargaDatosB] >> UnZipFicheros >> FusionarDatos >> AlmacenarBBDD
