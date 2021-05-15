@@ -82,6 +82,7 @@ def fusionarDatos():
 
     # Unir ambas tablas por la columna fecha
     union = pd.merge(temperatura_renombre, humedad_renombre, on="datetime")
+    union = union.notna()
     union.to_csv("/tmp/Practica2-CC/datos.csv")
 
 FusionarDatos = PythonOperator(
