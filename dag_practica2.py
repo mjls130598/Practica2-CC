@@ -98,5 +98,11 @@ AlmacenarBBDD = BashOperator(
     dag=dag,
 )
 
+TestVersiones = BashOperator(
+    task_id='testVersiones',
+    bash_command='cd /tmp/Practica2-CC && docker-compose run web python manage.py test',
+    dag=dag,
+)
+
 #Dependencias
-CrearEntornoBBDD >> [DescargaDatosA, DescargaDatosB] >> UnZipFicheros >> FusionarDatos >> AlmacenarBBDD
+CrearEntornoBBDD >> [DescargaDatosA, DescargaDatosB] >> UnZipFicheros >> FusionarDatos >> AlmacenarBBDD >> TestVersiones
