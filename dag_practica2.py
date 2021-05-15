@@ -40,8 +40,8 @@ dag = DAG(
 CrearEntornoBBDD = BashOperator(
     task_id='crearEntornoBBDD',
     bash_command= 
-    'cd /tmp && git clone https://github.com/mjls130598/Practica2-CC.git && '+
-    'docker-compose build',
+    'cd /tmp && git clone https://github.com/mjls130598/Practica2-CC.git && cd ./Practica2-CC'+
+    ' && docker-compose build',
     dag=dag
 )
 
