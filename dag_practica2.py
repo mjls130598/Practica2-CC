@@ -105,7 +105,7 @@ TestVersiones = BashOperator(
 )
 
 Despliegue = BashOperator(
-    task_id='testVersiones',
+    task_id='despliegue',
     bash_command='cd /tmp/Practica2-CC && docker-compose up',
     dag=dag,
 )
