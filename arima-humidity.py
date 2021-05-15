@@ -2,9 +2,8 @@ from statsmodels.tsa.arima_model import ARIMA
 import pandas as pd
 import pmdarima as pm
 
-df = pd.read_csv('humidity.csv', names=['value'], header=0)
-
-model = pm.auto_arima(df.sanfrancisco, start_p=1, start_q=1,
+df = pd.read_csv('datos.csv')
+model = pm.auto_arima(df["humidity"], start_p=1, start_q=1,
                       test='adf',       # use adftest to find optimal 'd'
                       max_p=3, max_q=3, # maximum p and q
                       m=1,              # frequency of series
