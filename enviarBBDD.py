@@ -13,5 +13,7 @@ class Datos(Document):
 datos = pd.read_csv("./datos.csv")
 
 for index, row in datos.iterrows():
-    datos = Datos(fecha=row["datetime"], temperatura=row["temperature"], humedad=row["humidity"])
+    temperatura = 0 if row["temperature"].isnan() else row["temperature"]
+    humedad = 0 if row["humedad"].isnan() else row["humidity"]
+    datos = Datos(fecha=row["datetime"], temperatura=temperatura, humedad=temperatura)
     datos.save()
