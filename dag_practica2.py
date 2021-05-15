@@ -104,5 +104,11 @@ TestVersiones = BashOperator(
     dag=dag,
 )
 
+Despliegue = BashOperator(
+    task_id='testVersiones',
+    bash_command='cd /tmp/Practica2-CC && docker-compose up',
+    dag=dag,
+)
+
 #Dependencias
-CrearEntornoBBDD >> [DescargaDatosA, DescargaDatosB] >> UnZipFicheros >> FusionarDatos >> AlmacenarBBDD >> TestVersiones
+CrearEntornoBBDD >> [DescargaDatosA, DescargaDatosB] >> UnZipFicheros >> FusionarDatos >> AlmacenarBBDD >> TestVersiones >> Despliegue
