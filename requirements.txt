@@ -1,5 +1,7 @@
 Django>=3.0,<4.0
 mongoengine==0.23
-scikit-learn
-pandas
+numpy >= 1.16
+tqdm>=4.57.0
+pandas>=1.2.2
 pmdarima
+git+https://github.com/JoaquinAmatRodrigo/skforecast@v0.1.8
