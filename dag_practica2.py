@@ -106,7 +106,8 @@ TestVersiones = BashOperator(
 
 Despliegue = BashOperator(
     task_id='despliegue',
-    bash_command='cd /tmp/Practica2-CC && docker-compose up',
+    bash_command='cd /tmp/Practica2-CC && docker-compose run python manage.py migrate'
+    ' && docker-compose up',
     dag=dag,
 )
 
