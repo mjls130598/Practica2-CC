@@ -6,8 +6,9 @@ from datetime import datetime, timedelta
 from sklearn.linear_model import Ridge
 from skforecast.ForecasterAutoreg import ForecasterAutoreg
 
-df = pd.DataFrame(list(models.Datos.objects.all()))
-model_humidityv1 = pm.auto_arima(df["humidity"], start_p=1, start_q=1,
+df = pd.DataFrame(list(models.Datos.objects.values_list('fecha', 'temperatura', 'humedad')),
+    columns=['fecha', 'temperatura', 'humedad'])
+model_humidityv1 = pm.auto_arima(df["humedad"], start_p=1, start_q=1,
                       test='adf',       # use adftest to find optimal 'd'
                       max_p=3, max_q=3, # maximum p and q
                       m=1,              # frequency of series
@@ -20,7 +21,7 @@ model_humidityv1 = pm.auto_arima(df["humidity"], start_p=1, start_q=1,
                       suppress_warnings=True, 
                       stepwise=True)
 
-model_temperaturev1 = pm.auto_arima(df["temperature"], start_p=1, start_q=1,
+model_temperaturev1 = pm.auto_arima(df["temperatura"], start_p=1, start_q=1,
                       test='adf',       # use adftest to find optimal 'd'
                       max_p=3, max_q=3, # maximum p and q
                       m=1,              # frequency of series
@@ -36,12 +37,12 @@ model_temperaturev1 = pm.auto_arima(df["temperature"], start_p=1, start_q=1,
 model_humidityv2 = ForecasterAutoreg(
                 regressor = Ridge(normalize=True),
                 lags      = 24
-             ).fit(df["humidity"])
+             ).fit(df["humedad"])
 
 model_temperaturev2 = ForecasterAutoreg(
                 regressor = Ridge(normalize=True),
                 lags      = 24
-             ).fit(df["temperature"])
+             ).fit(df["temperatura"])
 
 def prediccion_v1(request, horas):
 
