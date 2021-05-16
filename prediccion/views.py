@@ -3,6 +3,8 @@ from prediccion import models
 import pandas as pd
 import pmdarima as pm
 from datetime import datetime, timedelta
+from sklearn.linear_model import Ridge
+from skforecast.ForecasterAutoreg import ForecasterAutoreg
 
 df = pd.DataFrame(list(models.Datos.objects.all()))
 model_humidityv1 = pm.auto_arima(df["humidity"], start_p=1, start_q=1,
@@ -30,6 +32,16 @@ model_temperaturev1 = pm.auto_arima(df["temperature"], start_p=1, start_q=1,
                       error_action='ignore',  
                       suppress_warnings=True, 
                       stepwise=True)
+
+model_humidityv2 = ForecasterAutoreg(
+                regressor = Ridge(normalize=True),
+                lags      = 24
+             ).fit(df["humidity"])
+
+model_temperaturev2 = ForecasterAutoreg(
+                regressor = Ridge(normalize=True),
+                lags      = 24
+             ).fit(df["temperature"])
 
 def prediccion_v1(request, horas):
 
@@ -60,10 +72,8 @@ def prediccion_v1(request, horas):
 def prediccion_v2(request, horas):
 
     # Se predice tanto la humedad y temperatura a esa hora
-    fc_humedad, confint_humedad = model_humidityv1.predict(
-        n_periods=horas, return_conf_int=True)
-    fc_temperatura, confint_temperatura = model_temperaturev1.predict(
-        n_periods=horas, return_conf_int=True)
+    fc_humedad = model_humidityv2.predict(steps=horas)
+    fc_temperatura = model_temperaturev2.predict(steps=horas)
 
     hora_actual = datetime.now.time()
     datos = []
