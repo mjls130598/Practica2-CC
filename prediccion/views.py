@@ -4,10 +4,11 @@ import pandas as pd
 import pmdarima as pm
 from datetime import datetime, timedelta
 from sklearn.linear_model import Ridge
-from skforecast.ForecasterAutoreg import ForecasterAutoreg
+from skforecast import ForecasterAutoreg
 
 df = pd.DataFrame(list(models.Datos.objects.values_list('fecha', 'temperatura', 'humedad')),
     columns=['fecha', 'temperatura', 'humedad'])
+    
 model_humidityv1 = pm.auto_arima(df["humedad"], start_p=1, start_q=1,
                       test='adf',       # use adftest to find optimal 'd'
                       max_p=3, max_q=3, # maximum p and q
@@ -34,15 +35,17 @@ model_temperaturev1 = pm.auto_arima(df["temperatura"], start_p=1, start_q=1,
                       suppress_warnings=True, 
                       stepwise=True)
 
-model_humidityv2 = ForecasterAutoreg(
+model_humidityv2 = ForecasterAutoreg.ForecasterAutoreg(
                 regressor = Ridge(normalize=True),
                 lags      = 24
-             ).fit(df["humedad"])
+             )
+model_humidityv2.fit(df["humedad"])
 
-model_temperaturev2 = ForecasterAutoreg(
+model_temperaturev2 = ForecasterAutoreg.ForecasterAutoreg(
                 regressor = Ridge(normalize=True),
                 lags      = 24
-             ).fit(df["temperatura"])
+             )
+model_temperaturev2.fit(df["temperatura"])
 
 def prediccion_v1(request, horas):
 
@@ -52,7 +55,7 @@ def prediccion_v1(request, horas):
     fc_temperatura, confint_temperatura = model_temperaturev1.predict(
         n_periods=horas, return_conf_int=True)
 
-    hora_actual = datetime.now.time()
+    hora_actual = datetime.now()
     datos = []
     for i in range(horas):
         hora_futura = hora_actual + timedelta(hours= i + 1)
@@ -76,7 +79,7 @@ def prediccion_v2(request, horas):
     fc_humedad = model_humidityv2.predict(steps=horas)
     fc_temperatura = model_temperaturev2.predict(steps=horas)
 
-    hora_actual = datetime.now.time()
+    hora_actual = datetime.now()
     datos = []
     for i in range(horas):
         hora_futura = hora_actual + timedelta(hours= i + 1)
