@@ -1,11 +1,13 @@
 from django.test import TestCase
-import views
+from django.urls import reverse
 
 class PrediccionTest(TestCase):
-    def testVersion1():
-        resultado = views.prediccion_v1(24)
-        assert len(resultado) == 24
+    def testVersion1(self):
+        response = self.client.get(reverse('version1', args=[24]))
+        self.assertEqual(response.status_code, 200)
+        self.assertIsNot(response.content, "")
 
-    def testVersion2():
-        resultado = views.prediccion_v2(24)
-        assert len(resultado) == 24
+    def testVersion2(self):
+        response = self.client.get(reverse('version2', args=[24]))
+        self.assertEqual(response.status_code, 200)
+        self.assertIsNot(response.content, "")
